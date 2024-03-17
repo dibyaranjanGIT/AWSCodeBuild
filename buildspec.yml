@@ -1,0 +1,22 @@
+version: 0.1
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt -t .
+      # The -t flag installs the dependencies in the current directory
+  build:
+    commands:
+      - echo "Packaging Lambda function..."
+      - zip -r lambda_package.zip ./*
+      # You might want to exclude unnecessary files and directories
+      # Example: zip -r lambda_package.zip ./* -x "*.git*" "*.DS_Store*"
+  post_build:
+    commands:
+      - echo "Deploying to Lambda..."
+      - aws lambda update-function-code --function-name lambda_invoke_by_s3.py --zip-file fileb://lambda_package.zip
+      # Additional commands if needed, like updating configuration, etc.
